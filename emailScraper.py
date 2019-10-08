@@ -3,6 +3,7 @@ import re
 import requests
 import queue
 import urllib
+import sys
 
 
 class mailSpider:
@@ -10,6 +11,8 @@ class mailSpider:
     def __init__(self, scope, maxEmail):
         self.visited = set()
         self.to_visit = queue.Queue()
+        scope = scope.strip("http://")
+        scope = urllib.parse.urlparse("//" + scope)[1] 
         self.to_visit.put(scope)
         self.emails = set()
         self.emailCount = 0
@@ -90,7 +93,11 @@ class mailSpider:
 
 
 def main():
-    spider = mailSpider("www.rit.edu", 20)
+    if len(sys.argv) != 3:
+        print("Usage: emailScraper.py [url], [emailCount]")
+    url = sys.argv[1]
+    maxEmail = sys.argv[2]
+    spider = mailSpider(url, int(maxEmail))
     spider.crawl()
 
 
